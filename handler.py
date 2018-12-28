@@ -46,7 +46,7 @@ def parse_detail_url(data):
     if len(result) > 0:
         return result[0]
     else:
-        return None
+        return ''
 
 
 def parse_thumb_url(data):
@@ -56,7 +56,7 @@ def parse_thumb_url(data):
     if len(result) > 0:
         return result[0]
     else:
-        return None
+        return ''
 
 
 def parse_title(data):
@@ -66,7 +66,7 @@ def parse_title(data):
     if len(result) > 0:
         return result[0]
     else:
-        return None
+        return ''
 
 
 def parse_video_duration(data):
@@ -76,7 +76,7 @@ def parse_video_duration(data):
     if len(result) > 0:
         return result[0]
     else:
-        return None
+        return ''
 
 
 def get_detail_info(list_data):
@@ -116,7 +116,7 @@ def parse_detail_video_url_low(data):
     if len(result) > 0:
         return result[0]
     else:
-        return None
+        return ''
 
 
 def parse_detail_video_url_high(data):
@@ -126,7 +126,7 @@ def parse_detail_video_url_high(data):
     if len(result) > 0:
         return result[0]
     else:
-        return None
+        return ''
 
 
 def parse_detail_hls_url(data):
@@ -136,7 +136,7 @@ def parse_detail_hls_url(data):
     if len(result) > 0:
         return result[0]
     else:
-        return None
+        return ''
 
 
 def parse_detail_thumb_url_small(data):
@@ -146,7 +146,7 @@ def parse_detail_thumb_url_small(data):
     if len(result) > 0:
         return result[0]
     else:
-        return None
+        return ''
 
 
 def parse_detail_thumb_url_big(data):
@@ -156,7 +156,7 @@ def parse_detail_thumb_url_big(data):
     if len(result) > 0:
         return result[0]
     else:
-        return None
+        return ''
 
 
 def parse_slide_thumb_url(data):
@@ -166,7 +166,7 @@ def parse_slide_thumb_url(data):
     if len(result) > 0:
         return result[0]
     else:
-        return None
+        return ''
 
 
 def parse_slide_thumb_url_big(data):
@@ -176,7 +176,7 @@ def parse_slide_thumb_url_big(data):
     if len(result) > 0:
         return result[0]
     else:
-        return None
+        return ''
 
 
 def parse_slide_thumb_url_minute(data):
@@ -196,7 +196,7 @@ def parse_video_url_cdn(data):
     if len(result) > 0:
         return result[0]
     else:
-        return None
+        return ''
 
 
 def parse_video_tags(data):
@@ -206,7 +206,7 @@ def parse_video_tags(data):
     for content in doc('.video-metadata li').items():
         tag = do_parse_video_tag(str(content))
 
-        if tag is not None:
+        if tag:
             tags.append(tag)
 
     return tags
@@ -219,4 +219,4 @@ def do_parse_video_tag(data):
     if len(result) > 0:
         return result[0]
     else:
-        return None
+        return ''

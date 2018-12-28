@@ -17,6 +17,12 @@ def main():
                 detail_data = handler.get_detail_info(list_data)
                 model.update_detail_info(config_crawler.LIST_DATA_TABLE_NAME, detail_data)
 
+                for tag in detail_data['tags']:
+                    tag_info = model.get_tag_by_name(config_crawler.TAGS_TABLE_NAME, tag)
+
+                    if not tag_info:
+                        model.insert_tag(config_crawler.TAGS_TABLE_NAME, tag)
+
 
 if __name__ == '__main__':
     main()

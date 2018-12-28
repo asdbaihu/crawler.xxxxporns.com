@@ -32,7 +32,7 @@ def list_data_insert(table, datas):
 
 
 def get_page_tracker(table):
-    connection_obj = connect();
+    connection_obj = connect()
 
     with connection_obj.cursor() as cursor:
 
@@ -48,7 +48,7 @@ def get_page_tracker(table):
 
 
 def insert_page_tracker(table, data):
-    connection_obj = connect();
+    connection_obj = connect()
 
     with connection_obj.cursor() as cursor:
         sql = 'INSERT INTO %s (page_type, page_number) VALUES %s' % (table, '(%s, %s)')
@@ -78,7 +78,7 @@ def update_page_tracker(table, data):
 
 
 def get_list_datas(table):
-    connection_obj = connect();
+    connection_obj = connect()
 
     with connection_obj.cursor() as cursor:
         sql = 'SELECT * FROM %s WHERE status = 0 LIMIT 5' % table
@@ -94,7 +94,7 @@ def get_list_datas(table):
 
 def update_detail_info(table, data):
 
-    connection_obj = connect();
+    connection_obj = connect()
 
     with connection_obj.cursor() as cursor:
         sql = 'UPDATE %s SET video_quality_url = %s, video_hls_url = %s, detail_thumb_url = %s, thumb_slide_url = %s, thumb_slide_minute = %s, cdn_url = %s, tags = %s ,status = %s WHERE file_hash = %s' % (table, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
@@ -116,3 +116,36 @@ def update_detail_info(table, data):
         connection_obj.commit()
 
         connection_obj.close()
+
+
+def insert_tag(table, tag):
+
+    connection_obj = connect()
+
+    with connection_obj.cursor() as cursor:
+        sql = 'INSERT INTO %s (name) VALUES %s' % (table, '(%s)')
+
+        cursor.execute(sql, tag)
+
+        connection_obj.commit()
+
+        connection_obj.close()
+
+
+    return True
+
+
+def get_tag_by_name(table, data):
+    connection_obj = connect()
+
+    with connection_obj.cursor() as cursor:
+
+        sql = 'SELECT * FROM %s WHERE name = %s' % (table, '%s')
+
+        cursor.execute(sql, data)
+
+        result = cursor.fetchone()
+
+        connection_obj.close()
+
+        return result

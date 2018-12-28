@@ -1,0 +1,5 @@
+DB_HOST='localhost'
+DB_USERNAME='root'
+DB_PASSWORD='6ee9d32fc8'
+DB_DATABASE='data_warehouse'
+DB_CHARSET='utf8mb4'

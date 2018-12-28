@@ -1,4 +1,6 @@
-config.py
 .idea/*
 __pycache__/*
 utility/__pycache__/*
+config_database.py
+config_crawler.py
+

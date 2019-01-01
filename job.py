@@ -13,7 +13,7 @@ def main():
             time.sleep(300)
         else:
             for list_data in list_datas:
-                time.sleep(random.randint(5, 10))
+                time.sleep(random.randint(10, 30))
                 detail_data = handler.get_detail_info(list_data)
                 model.update_detail_info(config_crawler.LIST_DATA_TABLE_NAME, detail_data)
 

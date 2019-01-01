@@ -81,7 +81,7 @@ def get_list_datas(table):
     connection_obj = connect()
 
     with connection_obj.cursor() as cursor:
-        sql = 'SELECT * FROM %s WHERE status = 0 LIMIT 5' % table
+        sql = 'SELECT * FROM %s LIMIT 10' % table
 
         cursor.execute(sql)
 

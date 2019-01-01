@@ -85,7 +85,7 @@ def get_detail_info(list_data):
 
     video_url_low = parse_detail_video_url_low(response.text)
     video_url_high = parse_detail_video_url_high(response.text)
-    video_hls_url = parse_detail_hls_url(response.text)
+    video_hls_url = parse_highest_quality_hls(parse_detail_hls_url(response.text))
     video_thumb_url_small = parse_detail_thumb_url_small(response.text)
     video_thumb_url_big = parse_detail_thumb_url_big(response.text)
     video_slide_thumb_url = parse_slide_thumb_url(response.text)
@@ -134,9 +134,30 @@ def parse_detail_hls_url(data):
     result = re.findall(pattern, data)
 
     if len(result) > 0:
+        parse_highest_quality_hls(result[0])
         return result[0]
     else:
         return ''
+
+
+def parse_highest_quality_hls(hls_url):
+    response = requests.get(hls_url)
+
+    pattern_master_hls = re.compile(r'name="(\d+)p"', re.IGNORECASE)
+    result = re.findall(pattern_master_hls, response.text)
+
+    max_pixel_number = max(result)
+
+    url_info = hls_url.split('hls.m3u8')
+
+    base_hls_url = url_info[0]
+    hls_uri = 'hls-' + max_pixel_number + 'p.m3u8' + url_info[1]
+
+    full_highest_hls_url = base_hls_url + hls_uri
+
+    return full_highest_hls_url
+
+
 
 
 def parse_detail_thumb_url_small(data):

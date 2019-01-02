@@ -4,6 +4,7 @@ import re
 from utility import hash
 import config_crawler
 from utility import logger
+import time
 
 
 def get_list_datas(url):
@@ -31,7 +32,8 @@ def handle_list_datas(origin_datas):
             'list_thumb_url': thumb_url,
             'title': title,
             'video_duration': video_duration,
-            'file_hash': file_hash
+            'file_hash': file_hash,
+            'addtime': str(time.time()).split('.')[0]
         }
 
         list_data.append(single_dict)

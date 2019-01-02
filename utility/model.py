@@ -20,9 +20,9 @@ def list_data_insert(table, datas):
     with connection_obj.cursor() as cursor:
         for data in datas:
 
-            sql = 'INSERT INTO %s (detail_url, list_thumb_url, title, video_duration, file_hash) VALUES %s' % (table, '(%s, %s, %s, %s, %s)')
+            sql = 'INSERT INTO %s (detail_url, list_thumb_url, title, video_duration, file_hash, addtime) VALUES %s' % (table, '(%s, %s, %s, %s, %s, %s)')
 
-            cursor.execute(sql, (data['detail_url'], data['list_thumb_url'], data['title'], data['video_duration'], data['file_hash']))
+            cursor.execute(sql, (data['detail_url'], data['list_thumb_url'], data['title'], data['video_duration'], data['file_hash'], data['addtime']))
 
     connection_obj.commit()
 
@@ -77,11 +77,14 @@ def update_page_tracker(table, data):
         return True
 
 
-def get_list_datas(table):
+def get_list_datas(table, page, page_size):
+
+    offset = (page - 1)*page_size
+
     connection_obj = connect()
 
     with connection_obj.cursor() as cursor:
-        sql = 'SELECT * FROM %s LIMIT 10' % table
+        sql = 'SELECT * FROM %s LIMIT %s, %s' % (table, offset, page_size)
 
         cursor.execute(sql)
 

@@ -9,6 +9,7 @@ import time
 
 def get_datas(url):
     response = requests.get(url)
+    response.encoding = 'utf-8'
 
     return handle_datas(response.text)
 

@@ -22,7 +22,6 @@ def main():
             model.update_detail_info(config_crawler.LIST_DATA_TABLE_NAME, detail_data, mysql_connection)
         else:
             model.mysql_close(mysql_connection)
-            exit(0)
 
         page += 1
 

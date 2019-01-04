@@ -22,6 +22,8 @@ def main():
     for data in datas:
         model.data_insert(config_crawler.LIST_DATA_TABLE_NAME, data, mysql_connection)
         model.insert_tag(config_crawler.TAGS_TABLE_NAME, data['tags'], mysql_connection)
+    else:
+        pass
 
     model.mysql_close(mysql_connection)
 

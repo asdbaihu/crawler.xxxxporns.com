@@ -1,7 +1,8 @@
 import pymysql.cursors
 import config_database
+import time
 
-def connect():
+def mysql_connect():
     connection_obj = pymysql.connect(
         host=config_database.DB_HOST,
         user=config_database.DB_USERNAME,
@@ -14,27 +15,29 @@ def connect():
     return connection_obj
 
 
-def list_data_insert(table, datas):
-    connection_obj = connect()
-
-    with connection_obj.cursor() as cursor:
-        for data in datas:
-
-            sql = 'INSERT INTO %s (detail_url, list_thumb_url, title, video_duration, file_hash, addtime) VALUES %s' % (table, '(%s, %s, %s, %s, %s, %s)')
-
-            cursor.execute(sql, (data['detail_url'], data['list_thumb_url'], data['title'], data['video_duration'], data['file_hash'], data['addtime']))
-
-    connection_obj.commit()
-
-    connection_obj.close()
-
-    return True
+def mysql_close(connection):
+    connection.close()
 
 
-def get_page_tracker(table):
-    connection_obj = connect()
+def data_insert(table, data, mysql_connection):
 
-    with connection_obj.cursor() as cursor:
+    with mysql_connection.cursor() as cursor:
+        sql = 'INSERT INTO %s (detail_url, list_thumb_url, title, video_duration, file_hash, addtime,' \
+              'expire_time, video_quality_url, video_hls_url, detail_thumb_url, thumb_slide_url, thumb_slide_minute,' \
+              'cdn_url, tags, status) VALUES %s' % (
+        table, '(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)')
+
+        cursor.execute(sql, (
+        data['detail_url'], data['list_thumb_url'], data['title'], data['video_duration'], data['file_hash'],
+        data['addtime'], data['expire_time'], data['video_quality_url'], data['video_hls_url'], data['detail_thumb_url'],
+        data['thumb_slide_url'], data['thumb_slide_minute'], data['cdn_url'], data['tags'], data['status']))
+
+        mysql_connection.commit()
+
+
+def get_page_tracker(table, mysql_connection):
+
+    with mysql_connection.cursor() as cursor:
 
         sql = 'SELECT * FROM %s WHERE page_type = 1' % table
 
@@ -42,65 +45,79 @@ def get_page_tracker(table):
 
         result = cursor.fetchone()
 
-        connection_obj.close()
-
         return result
 
 
-def insert_page_tracker(table, data):
-    connection_obj = connect()
+def insert_page_tracker(table, data, mysql_connection):
 
-    with connection_obj.cursor() as cursor:
+    with mysql_connection.cursor() as cursor:
         sql = 'INSERT INTO %s (page_type, page_number) VALUES %s' % (table, '(%s, %s)')
 
         cursor.execute(sql, (data['page_type'], data['page_number']))
 
-        connection_obj.commit()
-
-        connection_obj.close()
-
-        return True
+        mysql_connection.commit()
 
 
-def update_page_tracker(table, data):
-    connection_obj = connect();
+def update_page_tracker(table, data, mysql_connection):
 
-    with connection_obj.cursor() as cursor:
+    with mysql_connection.cursor() as cursor:
         sql = 'UPDATE %s SET page_number = %s WHERE page_type = 1' % (table, '(%s)')
 
         cursor.execute(sql, (data['page_number']))
 
-        connection_obj.commit()
-
-        connection_obj.close()
-
-        return True
+        mysql_connection.commit()
 
 
-def get_list_datas(table, page, page_size):
+def insert_tag(table, tag, mysql_connection):
+
+    with mysql_connection.cursor() as cursor:
+
+        for tag in tag.split(','):
+
+            tag_info = get_tag_by_name(table, tag, mysql_connection)
+
+            if not tag_info:
+                sql = 'INSERT INTO %s (name) VALUES %s' % (table, '(%s)')
+
+                cursor.execute(sql, tag)
+
+                mysql_connection.commit()
+
+
+def get_tag_by_name(table, data, mysql_connection):
+
+    with mysql_connection.cursor() as cursor:
+
+        sql = 'SELECT * FROM %s WHERE name = %s' % (table, '%s')
+
+        cursor.execute(sql, data)
+
+        result = cursor.fetchone()
+
+        return result
+
+
+def get_expired_datas(table, page, page_size, mysql_connection):
 
     offset = (page - 1)*page_size
 
-    connection_obj = connect()
-
-    with connection_obj.cursor() as cursor:
-        sql = 'SELECT * FROM %s LIMIT %s, %s' % (table, offset, page_size)
+    with mysql_connection.cursor() as cursor:
+        sql = 'SELECT * FROM %s WHERE expire_time < %s LIMIT %s, %s' % (table, int(str(time.time()).split('.')[0]), offset, page_size)
 
         cursor.execute(sql)
 
         result = cursor.fetchall()
 
-        connection_obj.close()
+        for data in result:
+            yield data
 
-        return result
 
+def update_detail_info(table, data, mysql_connection):
 
-def update_detail_info(table, data):
-
-    connection_obj = connect()
+    connection_obj = mysql_connection
 
     with connection_obj.cursor() as cursor:
-        sql = 'UPDATE %s SET video_quality_url = %s, video_hls_url = %s, detail_thumb_url = %s, thumb_slide_url = %s, thumb_slide_minute = %s, cdn_url = %s, tags = %s ,status = %s WHERE file_hash = %s' % (table, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
+        sql = 'UPDATE %s SET video_quality_url = %s, video_hls_url = %s, detail_thumb_url = %s, thumb_slide_url = %s, thumb_slide_minute = %s, cdn_url = %s, tags = %s ,expire_time = %s WHERE file_hash = %s' % (table, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
 
         cursor.execute(
             sql, (
@@ -111,44 +128,9 @@ def update_detail_info(table, data):
                 data['thumb_slide_minute'],
                 data['video_url_cdn'],
                 ','.join(data['tags']),
-                data['status'],
+                data['expire_time'],
                 data['file_hash'],
             )
         )
 
         connection_obj.commit()
-
-        connection_obj.close()
-
-
-def insert_tag(table, tag):
-
-    connection_obj = connect()
-
-    with connection_obj.cursor() as cursor:
-        sql = 'INSERT INTO %s (name) VALUES %s' % (table, '(%s)')
-
-        cursor.execute(sql, tag)
-
-        connection_obj.commit()
-
-        connection_obj.close()
-
-
-    return True
-
-
-def get_tag_by_name(table, data):
-    connection_obj = connect()
-
-    with connection_obj.cursor() as cursor:
-
-        sql = 'SELECT * FROM %s WHERE name = %s' % (table, '%s')
-
-        cursor.execute(sql, data)
-
-        result = cursor.fetchone()
-
-        connection_obj.close()
-
-        return result

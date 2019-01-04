@@ -7,17 +7,15 @@ from utility import logger
 import time
 
 
-def get_list_datas(url):
+def get_datas(url):
     response = requests.get(url)
-    return handle_list_datas(response.text)
+    return handle_datas(response.text)
 
 
-def handle_list_datas(origin_datas):
+def handle_datas(origin_datas):
     doc = PyQuery(origin_datas)
 
     datas = doc(".thumb-block").items()
-
-    list_data = []
 
     for data in datas:
         data = str(data)
@@ -27,18 +25,27 @@ def handle_list_datas(origin_datas):
         video_duration = parse_video_duration(data)
         file_hash = hash.hash_with_blake2b(detail_url)
 
+        detail_info = get_detail_info(detail_url)
+
         single_dict = {
             'detail_url': detail_url,
             'list_thumb_url': thumb_url,
             'title': title,
             'video_duration': video_duration,
             'file_hash': file_hash,
-            'addtime': str(time.time()).split('.')[0]
+            'addtime': int(str(time.time()).split('.')[0]),
+            'expire_time': int(str(time.time()).split('.')[0]) + config_crawler.VALID_TIME_PERIOD,
+            'video_quality_url': ','.join(detail_info['video_quality_url']),
+            'video_hls_url': detail_info['video_hls_url'],
+            'detail_thumb_url': ','.join(detail_info['detail_thumb_url']),
+            'thumb_slide_url': ','.join(detail_info['thumb_slide_url']),
+            'thumb_slide_minute': detail_info['thumb_slide_minute'],
+            'cdn_url': detail_info['video_url_cdn'],
+            'tags': ','.join(detail_info['tags']),
+            'status': 1
         }
 
-        list_data.append(single_dict)
-
-    return list_data
+        yield single_dict
 
 
 def parse_detail_url(data):
@@ -81,9 +88,9 @@ def parse_video_duration(data):
         return ''
 
 
-def get_detail_info(list_data):
-    logger.write_log('Crawling the url ' + list_data['detail_url'], 'crawl')
-    response = requests.get(config_crawler.BASE_CRAWLER_URL + list_data['detail_url'])
+def get_detail_info(detail_url):
+    logger.write_log('Crawling the url ' + detail_url, 'crawl')
+    response = requests.get(config_crawler.BASE_CRAWLER_URL + detail_url)
 
     video_url_low = parse_detail_video_url_low(response.text)
     video_url_high = parse_detail_video_url_high(response.text)
@@ -96,19 +103,17 @@ def get_detail_info(list_data):
     video_url_cdn = parse_video_url_cdn(response.text)
     tags = parse_video_tags(response.text)
 
-    detail_datas = {
+    detail_data = {
         'video_quality_url': [video_url_low, video_url_high],
         'video_hls_url': video_hls_url,
         'detail_thumb_url': [video_thumb_url_small, video_thumb_url_big],
         'thumb_slide_url': [video_slide_thumb_url, video_slide_thumb_url_big],
         'thumb_slide_minute': video_slide_thumb_url_minute,
         'video_url_cdn': video_url_cdn,
-        'file_hash': hash.hash_with_blake2b(list_data['detail_url']),
-        'status': 1,
-        'tags': tags
+        'tags': tags,
     }
 
-    return detail_datas
+    return detail_data
 
 
 def parse_detail_video_url_low(data):

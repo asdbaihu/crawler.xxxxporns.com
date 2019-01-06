@@ -2,6 +2,7 @@ import config_crawler
 from utility import model
 import handler
 import time
+from utility import logger
 
 
 def main():
@@ -15,6 +16,7 @@ def main():
 
     for expired_data in expired_datas:
 
+        logger.write_log(expired_data, 'crawl.xxxxporns.com')
         detail_data = handler.get_detail_info(expired_data['detail_url'])
         detail_data.update({'expire_time': int(str(time.time()).split('.')[0]) + config_crawler.VALID_TIME_PERIOD})
         detail_data.update({'file_hash': expired_data['file_hash']})

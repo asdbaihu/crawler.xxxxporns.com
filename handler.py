@@ -91,7 +91,7 @@ def parse_video_duration(data):
 
 
 def get_detail_info(detail_url):
-    logger.write_log('Crawling the url ' + detail_url, 'crawl')
+    logger.write_log('Crawling the url ' + detail_url, 'crawl.xxxxporns.com')
     response = requests.get(config_crawler.BASE_CRAWLER_URL + detail_url)
 
     video_url_low = parse_detail_video_url_low(response.text)

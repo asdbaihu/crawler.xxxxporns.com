@@ -114,9 +114,7 @@ def get_expired_datas(table, page, page_size, mysql_connection):
 
 def update_detail_info(table, data, mysql_connection):
 
-    connection_obj = mysql_connection
-
-    with connection_obj.cursor() as cursor:
+    with mysql_connection.cursor() as cursor:
         sql = 'UPDATE %s SET video_quality_url = %s, video_hls_url = %s, detail_thumb_url = %s, thumb_slide_url = %s, thumb_slide_minute = %s, cdn_url = %s, tags = %s ,expire_time = %s WHERE file_hash = %s' % (table, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
 
         cursor.execute(
@@ -133,4 +131,14 @@ def update_detail_info(table, data, mysql_connection):
             )
         )
 
-        connection_obj.commit()
+        mysql_connection.commit()
+
+
+def delete_video_by_id(table, data, mysql_connection):
+
+    with mysql_connection.cursor() as cursor:
+        sql = 'DELETE FROM %s WHERE id = %s' % (table, '%s')
+
+        cursor.execute(sql, data)
+
+        mysql_connection.commit()

@@ -94,28 +94,33 @@ def get_detail_info(detail_url):
     logger.write_log('Crawling the url ' + detail_url, 'crawl.xxxxporns.com')
     response = requests.get(config_crawler.BASE_CRAWLER_URL + detail_url)
 
-    video_url_low = parse_detail_video_url_low(response.text)
-    video_url_high = parse_detail_video_url_high(response.text)
-    video_hls_url = parse_highest_quality_hls(parse_detail_hls_url(response.text))
-    video_thumb_url_small = parse_detail_thumb_url_small(response.text)
-    video_thumb_url_big = parse_detail_thumb_url_big(response.text)
-    video_slide_thumb_url = parse_slide_thumb_url(response.text)
-    video_slide_thumb_url_big = parse_slide_thumb_url_big(response.text)
-    video_slide_thumb_url_minute = parse_slide_thumb_url_minute(response.text)
-    video_url_cdn = parse_video_url_cdn(response.text)
-    tags = parse_video_tags(response.text)
+    fr = parse_detail_page_is_not_found(response.text)
 
-    detail_data = {
-        'video_quality_url': [video_url_low, video_url_high],
-        'video_hls_url': video_hls_url,
-        'detail_thumb_url': [video_thumb_url_small, video_thumb_url_big],
-        'thumb_slide_url': [video_slide_thumb_url, video_slide_thumb_url_big],
-        'thumb_slide_minute': video_slide_thumb_url_minute,
-        'video_url_cdn': video_url_cdn,
-        'tags': tags,
-    }
+    if fr is False:
+        video_url_low = parse_detail_video_url_low(response.text)
+        video_url_high = parse_detail_video_url_high(response.text)
+        video_hls_url = parse_highest_quality_hls(parse_detail_hls_url(response.text))
+        video_thumb_url_small = parse_detail_thumb_url_small(response.text)
+        video_thumb_url_big = parse_detail_thumb_url_big(response.text)
+        video_slide_thumb_url = parse_slide_thumb_url(response.text)
+        video_slide_thumb_url_big = parse_slide_thumb_url_big(response.text)
+        video_slide_thumb_url_minute = parse_slide_thumb_url_minute(response.text)
+        video_url_cdn = parse_video_url_cdn(response.text)
+        tags = parse_video_tags(response.text)
 
-    return detail_data
+        detail_data = {
+            'video_quality_url': [video_url_low, video_url_high],
+            'video_hls_url': video_hls_url,
+            'detail_thumb_url': [video_thumb_url_small, video_thumb_url_big],
+            'thumb_slide_url': [video_slide_thumb_url, video_slide_thumb_url_big],
+            'thumb_slide_minute': video_slide_thumb_url_minute,
+            'video_url_cdn': video_url_cdn,
+            'tags': tags,
+        }
+
+        return detail_data
+    else:
+        return None
 
 
 def parse_detail_video_url_low(data):
@@ -250,3 +255,12 @@ def do_parse_video_tag(data):
         return result[0]
     else:
         return ''
+
+
+def parse_detail_page_is_not_found(content):
+    fp = content.find('http-error-page')
+
+    if fp > 0:
+        return True
+    else:
+        return False

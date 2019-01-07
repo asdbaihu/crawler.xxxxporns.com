@@ -102,7 +102,7 @@ def get_expired_datas(table, page, page_size, mysql_connection):
     offset = (page - 1)*page_size
 
     with mysql_connection.cursor() as cursor:
-        sql = 'SELECT * FROM %s WHERE expire_time < %s LIMIT %s, %s' % (table, int(str(time.time()).split('.')[0]), offset, page_size)
+        sql = 'SELECT * FROM %s WHERE expire_time < %s ORDER BY ID DESC LIMIT %s, %s' % (table, int(str(time.time()).split('.')[0]), offset, page_size)
 
         cursor.execute(sql)
 

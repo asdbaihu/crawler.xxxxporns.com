@@ -22,17 +22,34 @@ def mysql_close(connection):
 def data_insert(table, data, mysql_connection):
 
     with mysql_connection.cursor() as cursor:
-        sql = 'INSERT INTO %s (detail_url, list_thumb_url, title, video_duration, file_hash, addtime,' \
-              'expire_time, video_quality_url, video_hls_url, detail_thumb_url, thumb_slide_url, thumb_slide_minute,' \
-              'cdn_url, tags, status) VALUES %s' % (
-        table, '(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)')
+        
+        data_info = get_data_by_file_hash(table, data['file_hash'], mysql_connection)
 
-        cursor.execute(sql, (
-        data['detail_url'], data['list_thumb_url'], data['title'], data['video_duration'], data['file_hash'],
-        data['addtime'], data['expire_time'], data['video_quality_url'], data['video_hls_url'], data['detail_thumb_url'],
-        data['thumb_slide_url'], data['thumb_slide_minute'], data['cdn_url'], data['tags'], data['status']))
+        if not data_info:
+            sql = 'INSERT INTO %s (detail_url, list_thumb_url, title, video_duration, file_hash, addtime,' \
+                  'expire_time, video_quality_url, video_hls_url, detail_thumb_url, thumb_slide_url, thumb_slide_minute,' \
+                  'cdn_url, tags, status) VALUES %s' % (
+            table, '(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)')
 
-        mysql_connection.commit()
+            cursor.execute(sql, (
+            data['detail_url'], data['list_thumb_url'], data['title'], data['video_duration'], data['file_hash'],
+            data['addtime'], data['expire_time'], data['video_quality_url'], data['video_hls_url'], data['detail_thumb_url'],
+            data['thumb_slide_url'], data['thumb_slide_minute'], data['cdn_url'], data['tags'], data['status']))
+
+            mysql_connection.commit()
+
+
+def get_data_by_file_hash(table, data, mysql_connection):
+
+    with mysql_connection.cursor() as cursor:
+
+        sql = 'SELECT * FROM %s WHERE file_hash = %s' % (table, '%s')
+
+        cursor.execute(sql, data)
+
+        result = cursor.fetchone()
+
+        return result
 
 
 def get_page_tracker(table, mysql_connection):

@@ -23,6 +23,8 @@ def main():
     datas = handler.get_datas(crawler_url + str(page))
 
     for data in datas:
+        print(data)
+        exit(90)
         model.data_insert(config_crawler.LIST_DATA_TABLE_NAME, data, mysql_connection)
         model.insert_tag(config_crawler.TAGS_TABLE_NAME, data['tags'], mysql_connection)
 

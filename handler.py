@@ -75,7 +75,7 @@ def parse_title(data):
     result = re.findall(pattern, data)
 
     if len(result) > 0:
-        return result[0]
+        return result[1]
     else:
         return ''
 

@@ -22,7 +22,7 @@ def mysql_close(connection):
 def data_insert(table, data, mysql_connection):
 
     with mysql_connection.cursor() as cursor:
-        
+
         data_info = get_data_by_file_hash(table, data['file_hash'], mysql_connection)
 
         if not data_info:

@@ -260,6 +260,8 @@ def do_parse_video_tag(data):
 
 
 def parse_detail_page_is_not_found(content):
+    print(content)
+    exit(90)
     fp = content.find('http-error-page')
 
     if fp > 0:

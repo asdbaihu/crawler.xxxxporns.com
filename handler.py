@@ -29,7 +29,7 @@ def handle_datas(origin_datas):
 
         detail_info = get_detail_info(detail_url)
 
-        logger.write_log(detail_url)
+        logger.write_log(detail_info)
 
         single_dict = {
             'detail_url': detail_url,

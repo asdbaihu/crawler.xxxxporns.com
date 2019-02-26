@@ -29,27 +29,26 @@ def handle_datas(origin_datas):
 
         detail_info = get_detail_info(detail_url)
 
-        logger.write_log(detail_info)
+        if detail_info is not None:
+            single_dict = {
+                'detail_url': detail_url,
+                'list_thumb_url': thumb_url,
+                'title': title,
+                'video_duration': video_duration,
+                'file_hash': file_hash,
+                'addtime': int(str(time.time()).split('.')[0]),
+                'expire_time': int(str(time.time()).split('.')[0]) + config_crawler.VALID_TIME_PERIOD,
+                'video_quality_url': ','.join(detail_info['video_quality_url']),
+                'video_hls_url': detail_info['video_hls_url'],
+                'detail_thumb_url': ','.join(detail_info['detail_thumb_url']),
+                'thumb_slide_url': ','.join(detail_info['thumb_slide_url']),
+                'thumb_slide_minute': detail_info['thumb_slide_minute'],
+                'cdn_url': detail_info['video_url_cdn'],
+                'tags': ','.join(detail_info['tags']),
+                'status': 1
+            }
 
-        single_dict = {
-            'detail_url': detail_url,
-            'list_thumb_url': thumb_url,
-            'title': title,
-            'video_duration': video_duration,
-            'file_hash': file_hash,
-            'addtime': int(str(time.time()).split('.')[0]),
-            'expire_time': int(str(time.time()).split('.')[0]) + config_crawler.VALID_TIME_PERIOD,
-            'video_quality_url': ','.join(detail_info['video_quality_url']),
-            'video_hls_url': detail_info['video_hls_url'],
-            'detail_thumb_url': ','.join(detail_info['detail_thumb_url']),
-            'thumb_slide_url': ','.join(detail_info['thumb_slide_url']),
-            'thumb_slide_minute': detail_info['thumb_slide_minute'],
-            'cdn_url': detail_info['video_url_cdn'],
-            'tags': ','.join(detail_info['tags']),
-            'status': 1
-        }
-
-        yield single_dict
+            yield single_dict
 
 
 def parse_detail_url(data):
@@ -263,8 +262,6 @@ def parse_detail_page_is_not_found(content):
     fp = content.find('http-error-page')
 
     if fp > 0:
-        print(content)
-        exit(90)
         return True
     else:
         return False

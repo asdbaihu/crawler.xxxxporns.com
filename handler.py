@@ -5,6 +5,7 @@ from utility import hash
 import config_crawler
 from utility import logger
 import time
+import json
 
 
 def get_datas(url):
@@ -45,7 +46,8 @@ def handle_datas(origin_datas):
                 'thumb_slide_minute': detail_info['thumb_slide_minute'],
                 'cdn_url': detail_info['video_url_cdn'],
                 'tags': ','.join(detail_info['tags']),
-                'status': 1
+                'status': 1,
+                'related_videos': detail_info['related_videos']
             }
 
             yield single_dict
@@ -92,7 +94,9 @@ def parse_video_duration(data):
 
 
 def get_detail_info(detail_url):
+
     logger.write_log('Crawling the url ' + detail_url, 'crawl.xxxxporns.com')
+
     response = requests.get(config_crawler.BASE_CRAWLER_URL + detail_url)
 
     fr = parse_detail_page_is_not_found(response.text)
@@ -108,6 +112,7 @@ def get_detail_info(detail_url):
         video_slide_thumb_url_minute = parse_slide_thumb_url_minute(response.text)
         video_url_cdn = parse_video_url_cdn(response.text)
         tags = parse_video_tags(response.text)
+        related_videos = parse_related_videos(response.text)
 
         detail_data = {
             'video_quality_url': [video_url_low, video_url_high],
@@ -117,11 +122,22 @@ def get_detail_info(detail_url):
             'thumb_slide_minute': video_slide_thumb_url_minute,
             'video_url_cdn': video_url_cdn,
             'tags': tags,
+            'related_videos': related_videos
         }
 
         return detail_data
     else:
         return None
+
+
+def parse_related_videos(data):
+    pattern = re.compile(r'var\s+video_related=(.*?);window')
+    result = re.findall(pattern, data)
+
+    if len(result) > 0:
+        return json.loads(result[0])
+    else:
+        return ''
 
 
 def parse_detail_video_url_low(data):

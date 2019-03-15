@@ -1,6 +1,7 @@
 import pymysql.cursors
 import config_database
 import time
+import json
 
 def mysql_connect():
     connection_obj = pymysql.connect(
@@ -155,6 +156,27 @@ def delete_video_by_id(table, data, mysql_connection):
 
     with mysql_connection.cursor() as cursor:
         sql = 'DELETE FROM %s WHERE id = %s' % (table, '%s')
+
+        cursor.execute(sql, data)
+
+        mysql_connection.commit()
+
+
+def set_related_videos(table, data, mysql_connection):
+    with mysql_connection.cursor() as cursor:
+
+        delete_related_videos(table, data['file_hash'], mysql_connection)
+
+        sql = 'INSERT INTO %s (file_hash, related_videos) VALUES %s' % (table, '(%s, %s)')
+
+        cursor.execute(sql, (data['file_hash'], json.dumps(data['related_videos'])))
+
+        mysql_connection.commit()
+
+
+def delete_related_videos(table, data, mysql_connection):
+    with mysql_connection.cursor() as cursor:
+        sql = 'DELETE FROM %s WHERE file_hash = %s' % (table, '%s')
 
         cursor.execute(sql, data)
 

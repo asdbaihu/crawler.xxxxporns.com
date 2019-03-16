@@ -162,22 +162,59 @@ def delete_video_by_id(table, data, mysql_connection):
         mysql_connection.commit()
 
 
-def set_related_videos(table, data, mysql_connection):
+def set_related_videos(table, origin_video_id, related_file_hash, mysql_connection):
     with mysql_connection.cursor() as cursor:
 
-        delete_related_videos(table, data['file_hash'], mysql_connection)
+        sql = 'INSERT INTO %s (related_file_hash, origin_video_id) VALUES %s' % (table, '(%s, %s)')
 
-        sql = 'INSERT INTO %s (file_hash, related_videos) VALUES %s' % (table, '(%s, %s)')
-
-        cursor.execute(sql, (data['file_hash'], json.dumps(data['related_videos'])))
+        cursor.execute(sql, (related_file_hash, origin_video_id))
 
         mysql_connection.commit()
 
 
-def delete_related_videos(table, data, mysql_connection):
-    with mysql_connection.cursor() as cursor:
-        sql = 'DELETE FROM %s WHERE file_hash = %s' % (table, '%s')
+def get_videos(table, last_id, page_size, mysql_connection):
 
-        cursor.execute(sql, data)
+    with mysql_connection.cursor() as cursor:
+
+        sql = 'SELECT * FROM %s WHERE id > %s ORDER BY id ASC limit %s' % (table, '%s', '%s')
+
+        cursor.execute(sql, (last_id, page_size))
+
+        result = cursor.fetchall()
+
+        return result
+
+
+def set_last_id(table, last_id, mysql_connection):
+
+    delete_last_id(table, mysql_connection)
+
+    with mysql_connection.cursor() as cursor:
+
+        sql = 'INSERT INTO %s (page_type, page_number) VALUES %s' % (table, '(%s, %s)')
+
+        cursor.execute(sql, (2, last_id))
+
+        mysql_connection.commit()
+
+
+def get_last_id(table, mysql_connection):
+
+    with mysql_connection.cursor() as cursor:
+
+        sql = 'SELECT * FROM %s WHERE page_type = 2' % table
+
+        cursor.execute(sql)
+
+        result = cursor.fetchone()
+
+        return result
+
+
+def delete_last_id(table, mysql_connection):
+    with mysql_connection.cursor() as cursor:
+        sql = 'DELETE FROM %s WHERE page_type = 2' % table
+
+        cursor.execute(sql)
 
         mysql_connection.commit()

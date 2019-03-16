@@ -47,7 +47,6 @@ def handle_datas(origin_datas):
                 'cdn_url': detail_info['video_url_cdn'],
                 'tags': ','.join(detail_info['tags']),
                 'status': 1,
-                'related_videos': detail_info['related_videos']
             }
 
             yield single_dict
@@ -112,7 +111,6 @@ def get_detail_info(detail_url):
         video_slide_thumb_url_minute = parse_slide_thumb_url_minute(response.text)
         video_url_cdn = parse_video_url_cdn(response.text)
         tags = parse_video_tags(response.text)
-        related_videos = parse_related_videos(response.text)
 
         detail_data = {
             'video_quality_url': [video_url_low, video_url_high],
@@ -122,7 +120,6 @@ def get_detail_info(detail_url):
             'thumb_slide_minute': video_slide_thumb_url_minute,
             'video_url_cdn': video_url_cdn,
             'tags': tags,
-            'related_videos': related_videos
         }
 
         return detail_data

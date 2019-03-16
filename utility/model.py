@@ -176,7 +176,7 @@ def get_videos(table, last_id, page_size, mysql_connection):
 
     with mysql_connection.cursor() as cursor:
 
-        sql = 'SELECT * FROM %s WHERE id < %s ORDER BY id DESC limit %s' % (table, '%s', '%s')
+        sql = 'SELECT * FROM %s WHERE id > %s ORDER BY id ASC limit %s' % (table, '%s', '%s')
 
         cursor.execute(sql, (last_id, page_size))
 

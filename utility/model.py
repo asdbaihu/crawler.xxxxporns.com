@@ -218,3 +218,13 @@ def delete_last_id(table, mysql_connection):
         cursor.execute(sql)
 
         mysql_connection.commit()
+
+
+def set_have_related_video(table, origin_video_id, mysql_connection):
+
+    with mysql_connection.cursor() as cursor:
+        sql = 'UPDATE %s SET is_related = 1 WHERE id = %s' % (table, '(%s)')
+
+        cursor.execute(sql, origin_video_id)
+
+        mysql_connection.commit()

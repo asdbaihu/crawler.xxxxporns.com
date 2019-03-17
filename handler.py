@@ -73,11 +73,11 @@ def parse_thumb_url(data):
 
 
 def parse_title(data):
-    pattern = re.compile(r'title="(.*?)">')
+    pattern = re.compile(r'<p><a\s+href="(.*?)">(.*?)<\/a><\/p>')
     result = re.findall(pattern, data)
 
     if len(result) > 0:
-        return result[1]
+        return result[0][1]
     else:
         return ''
 

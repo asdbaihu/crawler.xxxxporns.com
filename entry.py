@@ -12,7 +12,7 @@ def main():
     page_info = get_page_tracker(mysql_connection)
 
     if page_info is None:
-        page = 0
+        page = 1
         model.insert_page_tracker(config_crawler.PAGE_TRACKER_TABLE_NAME, {'page_number': page, 'page_type': 1},
                                   mysql_connection)
     else:

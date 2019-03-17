@@ -48,7 +48,8 @@ def get_related_videos():
 
                 model.data_insert(config_crawler.LIST_DATA_TABLE_NAME, single_dict, mysql_connection)
                 model.set_related_videos(config_crawler.RELATED_VIDEOS_TABLE_NAME, video['id'], single_dict['file_hash'], mysql_connection)
-
+                model.set_have_related_video(config_crawler.LIST_DATA_TABLE_NAME, video['id'], mysql_connection)
+                
 
 def get_last_id(mysql_connection):
     return model.get_last_id(config_crawler.PAGE_TRACKER_TABLE_NAME, mysql_connection)

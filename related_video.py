@@ -26,8 +26,8 @@ def get_related_videos():
             related_videos = handler.parse_related_videos(response.text)
 
             for relate_video in related_videos:
+                detail_info = handler.get_detail_info(relate_video['u'])
                 if detail_info:
-                    detail_info = handler.get_detail_info(relate_video['u'])
                     single_dict = {
                         'detail_url': relate_video['u'],
                         'list_thumb_url': relate_video['i'],

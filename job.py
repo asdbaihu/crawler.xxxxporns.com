@@ -4,16 +4,18 @@ import handler
 import time
 from utility import logger
 import random
+from multiprocessing import Pool
+import config_crawler
 
 
-def main():
+def main(param):
 
-    page = 1
-    page_size = 1000
+    offset = (param - 1)*config_crawler.JOB_REFRESH_SIZE
+    page_size = config_crawler.JOB_REFRESH_SIZE
 
     mysql_connection = model.mysql_connect()
 
-    expired_datas = model.get_expired_datas(config_crawler.LIST_DATA_TABLE_NAME, page, page_size, mysql_connection)
+    expired_datas = model.get_expired_datas(config_crawler.LIST_DATA_TABLE_NAME, offset, page_size, mysql_connection)
 
     for expired_data in expired_datas:
 
@@ -31,4 +33,6 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    l = [i*1 for i in range(1, 11)]
+    pool = Pool()
+    pool.map(main, l)

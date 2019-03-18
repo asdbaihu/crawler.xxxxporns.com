@@ -3,6 +3,7 @@ from utility import model
 import handler
 import time
 from utility import logger
+import random
 
 
 def main():
@@ -20,7 +21,7 @@ def main():
         detail_data = handler.get_detail_info(expired_data['detail_url'])
 
         if detail_data is not None:
-            detail_data.update({'expire_time': int(str(time.time()).split('.')[0]) + config_crawler.VALID_TIME_PERIOD})
+            detail_data.update({'expire_time': int(str(time.time()).split('.')[0]) + config_crawler.VALID_TIME_PERIOD + random.randint(300, 600)})
             detail_data.update({'file_hash': expired_data['file_hash']})
             model.update_detail_info(config_crawler.LIST_DATA_TABLE_NAME, detail_data, mysql_connection)
         else:

@@ -229,3 +229,35 @@ def set_have_related_video(table, origin_video_id, mysql_connection):
         cursor.execute(sql, origin_video_id)
 
         mysql_connection.commit()
+
+
+def get_tag_by_random(table, mysql_connection):
+
+    with mysql_connection.cursor() as cursor:
+
+        sql = 'SELECT * FROM %s ORDER BY rand() limit 1' % table
+
+        cursor.execute(sql)
+
+        result = cursor.fetchone()
+
+        return result
+
+
+def save_all_tags(table, tags, mysql_connection):
+    with mysql_connection.cursor() as cursor:
+
+        sql_insertion = 'INSERT INTO %s (name, hot_level) VALUES %s' % (table, '(%s, %s)')
+
+        for tag in tags:
+            sql_select = 'SELECT * FROM %s WHERE name = %s' % (table, '%s')
+
+
+            cursor.execute(sql_select, tag)
+
+            tag_info = cursor.fetchone()
+
+            if not tag_info:
+                cursor.execute(sql_insertion, (tag, 0))
+
+        mysql_connection.commit()

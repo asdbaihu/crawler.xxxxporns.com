@@ -278,3 +278,23 @@ def parse_detail_page_is_not_found(content):
         return True
     else:
         return False
+
+
+def get_all_tags(tags_url):
+    response = requests.get(tags_url)
+
+    doc = PyQuery(response.text)
+
+    tags_html = doc('#tags').items()
+
+    for tag_html in tags_html:
+        tags = parse_tag(str(tag_html))
+
+        return tags
+
+
+def parse_tag(tag_html):
+    pattern = re.compile('<b>(.*?)\s+<\/b>')
+    result = re.findall(pattern, tag_html)
+
+    return result

@@ -46,8 +46,7 @@ def main2():
     if random_tag:
         while n < config_crawler.NUMBER_FOR_CRAWLING_BY_TAG:
 
-            #url = crawler_url + random_tag['name'] + '/' + str(n) + '/'
-            url = crawler_url + 'chinese/' + str(n) + '/'
+            url = crawler_url + random_tag['name'] + '/' + str(n) + '/'
             datas = handler.get_datas(url)
 
             for data in datas:

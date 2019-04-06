@@ -261,3 +261,34 @@ def save_all_tags(table, tags, mysql_connection):
                 cursor.execute(sql_insertion, (tag, 0))
 
         mysql_connection.commit()
+
+
+def get_tags_with_related_video(table, is_related, page_size, mysql_connection):
+
+    with mysql_connection.cursor() as cursor:
+
+        sql = 'SELECT tags FROM %s WHERE is_related = %s ORDER BY id DESC limit %s' % (table, '%s', '%s')
+
+        cursor.execute(sql, (is_related, page_size))
+
+        result = cursor.fetchall()
+
+        return result
+
+
+def save_related_video_tags(table, tag, mysql_connection):
+    with mysql_connection.cursor() as cursor:
+
+        sql_insertion = 'INSERT INTO %s (name, hot_level) VALUES %s' % (table, '(%s, %s)')
+
+        sql_select = 'SELECT * FROM %s WHERE name = %s' % (table, '%s')
+
+
+        cursor.execute(sql_select, tag)
+
+        tag_info = cursor.fetchone()
+
+        if not tag_info:
+            cursor.execute(sql_insertion, (tag, 0))
+
+        mysql_connection.commit()

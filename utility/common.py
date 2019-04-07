@@ -43,8 +43,6 @@ def detect_ip_banned(html):
 
 
 def process_exists_by_command(cmd):
-    """/usr/local/bin/python3.6 /usr/share/nginx/html/spider-for-pornleech/run.py is a example"""
-
     process_info_list = os.popen('ps -ef |grep "'+ cmd +'" |grep -v grep').readlines()
 
     if len(process_info_list) < 1:

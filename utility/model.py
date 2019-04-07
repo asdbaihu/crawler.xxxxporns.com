@@ -115,13 +115,10 @@ def get_tag_by_name(table, data, mysql_connection):
         return result
 
 
-def get_expired_datas(table, page, page_size, mysql_connection):
+def get_expired_datas(table, page_size, mysql_connection):
 
     with mysql_connection.cursor() as cursor:
-        sql = 'SELECT * FROM %s WHERE expire_time < %s ORDER BY ID DESC LIMIT %s, %s' % (table, int(str(time.time()).split('.')[0]), page, page_size)
-
-        print(sql)
-        print("\n")
+        sql = 'SELECT * FROM %s WHERE expire_time < %s and is_related = 1 ORDER BY ID DESC LIMIT %s' % (table, int(str(time.time()).split('.')[0]), page_size)
 
         cursor.execute(sql)
 

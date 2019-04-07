@@ -34,6 +34,8 @@ def refresh():
     else:
         model.delete_video_by_id(config_crawler.LIST_DATA_TABLE_NAME, video_id, mysql_connection)
 
+    model.mysql_close(mysql_connection)
+
     return jsonify({'results': 'SUCCESS'})
 
 if __name__ == '__main__':

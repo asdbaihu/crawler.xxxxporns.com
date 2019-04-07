@@ -3,7 +3,6 @@ from pyquery import PyQuery
 import re
 from utility import hash
 import config_crawler
-from utility import logger
 import time
 import json
 
@@ -93,8 +92,6 @@ def parse_video_duration(data):
 
 
 def get_detail_info(detail_url):
-
-    logger.write_log('Crawling the url ' + detail_url, 'crawl.xxxxporns.com')
 
     response = requests.get(config_crawler.BASE_CRAWLER_URL + detail_url)
 
